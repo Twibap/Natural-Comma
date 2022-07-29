@@ -13,6 +13,8 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import io.github.twibap.comma.R
 import io.github.twibap.comma.model.Mart
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
 
 class MainFragment : Fragment(), CompoundButton.OnCheckedChangeListener {
 
@@ -69,10 +71,10 @@ class MainFragment : Fragment(), CompoundButton.OnCheckedChangeListener {
                     mart.itemFlags.and(item.bit) > 0
                 }
                 .forEach { item ->
-                message += item.value
-                if (item != Mart.Flag.IS_OPEN)
-                    message += ", "
-            }
+                    message += item.value
+                    if (item != Mart.Flag.IS_OPEN)
+                        message += ", "
+                }
             viewMessage.text = message
         }
     }
