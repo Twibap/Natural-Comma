@@ -2,6 +2,7 @@ package io.github.twibap.comma.ui.main
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.CompoundButton
 import android.widget.RadioGroup
+import android.widget.TextView
 import io.github.twibap.comma.R
 import io.github.twibap.comma.model.Mart
 
@@ -28,6 +30,8 @@ class MainFragment : Fragment(), CompoundButton.OnCheckedChangeListener {
 
     private lateinit var openOrClose: RadioGroup
 
+    private lateinit var viewMessage: TextView
+
     private val mart = Mart()
 
     override fun onCreateView(
@@ -44,6 +48,8 @@ class MainFragment : Fragment(), CompoundButton.OnCheckedChangeListener {
 
         openOrClose = view.findViewById(R.id.selectOpenOrClose)
 
+        viewMessage = view.findViewById(R.id.message)
+
         checkApple.setOnCheckedChangeListener(this)
         checkBerry.setOnCheckedChangeListener(this)
         checkBanana.setOnCheckedChangeListener(this)
@@ -56,7 +62,19 @@ class MainFragment : Fragment(), CompoundButton.OnCheckedChangeListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        // TODO: Use the ViewModel
+        viewModel.martLiveData.observe(viewLifecycleOwner) { mart ->
+            var message = ""
+            Mart.Flag.values()
+                .filter { item ->
+                    mart.itemFlags.and(item.bit) > 0
+                }
+                .forEach { item ->
+                message += item.value
+                if (item != Mart.Flag.IS_OPEN)
+                    message += ", "
+            }
+            viewMessage.text = message
+        }
     }
 
     override fun onCheckedChanged(p0: CompoundButton?, p1: Boolean) {
@@ -70,6 +88,7 @@ class MainFragment : Fragment(), CompoundButton.OnCheckedChangeListener {
         }
 
         mart.toggleFlag(flag)
+        viewModel.martLiveData.value = mart
     }
 
 }
