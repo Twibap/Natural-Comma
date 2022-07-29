@@ -72,6 +72,7 @@ class MainFragment : Fragment(), CompoundButton.OnCheckedChangeListener {
                 }
                 .forEach { item ->
                     message += item.value
+                    // TODO: 마지막 item은 "," 를 찍지 않는다.
                     if (item != Mart.Flag.IS_OPEN)
                         message += ", "
                 }
